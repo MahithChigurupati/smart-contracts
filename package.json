@@ -4,15 +4,36 @@
   "description": "Smart Contracts for transaction handling and mocks",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "npx hardhat clean",
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "test:sepolia": "npx hardhat test --network sepolia",
+    "lint": "npx solhint contracts/**/*.sol",
+    "lint:fix": "npx solhint --fix contracts/**/*.sol",
+    "format": "npx prettier --write .",
+    "coverage": "npx hardhat coverage",
+    "deploy": "npx hardhat deploy",
+    "deploy:sepolia": "npx hardhat deploy --network sepolia",
+    "deploy:mainnet": "npx hardhat deploy --network mainnet"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:MahithChigurupati/smart-contracts.git"
+  },
+  "author": "Mahith Chigurupati",
   "license": "ISC",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
-    "hardhat": "^2.19.1"
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.4.1",
+    "@nomiclabs/hardhat-solhint": "^3.0.1",
+    "hardhat": "^2.19.1",
+    "hardhat-deploy": "^0.11.34",
+    "hardhat-deploy-ethers": "^0.4.1",
+    "solidity-coverage": "^0.8.4"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.0"
+    "@openzeppelin/contracts": "^5.0.0",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.9.0"
   }
 }

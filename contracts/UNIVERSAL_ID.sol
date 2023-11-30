@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract UNIQ_ID is Ownable(msg.sender) {
+contract UNIVERSAL_ID is Ownable(msg.sender) {
     struct Identity {
         bytes32 UID;
-        bytes32 nameHash; // keccak256 hash of name
+        bytes32 firstNameHash; // keccak256 hash of name
+        bytes32 lastNameHash; // keccak256 hash of name
         uint256 dobHash; // Poseidon hash of date of birth
+        bytes32 phone;
     }
 
     struct Profile {
