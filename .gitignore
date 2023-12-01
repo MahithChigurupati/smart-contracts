@@ -1,11 +1,12 @@
 node_modules
-
-node_modules
 .env
 
 # Hardhat files
 /cache
 /artifacts
+
+/deployments
+gas-report.txt
 
 # TypeChain files
 /typechain
