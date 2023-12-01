@@ -3,6 +3,9 @@ import "@nomicfoundation/hardhat-toolbox"
 import "@nomicfoundation/hardhat-ethers"
 import "hardhat-deploy"
 import "hardhat-deploy-ethers"
+import "@nomiclabs/hardhat-solhint"
+import "hardhat-gas-reporter"
+import "hardhat-contract-sizer"
 
 import dotenv from "dotenv"
 
@@ -20,11 +23,13 @@ const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || ""
 
 const config: HardhatUserConfig = {
     solidity: {
-        compilers: [
-            {
-                version: "0.8.20",
+        version: "0.8.20",
+        settings: {
+            optimizer: {
+                enabled: true,
+                runs: 200,
             },
-        ],
+        },
     },
 
     networks: {
@@ -50,7 +55,9 @@ const config: HardhatUserConfig = {
         coinmarketcap: COINMARKETCAP_API_KEY,
         // token: "MATIC",
     },
-
+    contractSizer: {
+        runOnCompile: true,
+    },
     namedAccounts: {
         deployer: {
             default: 0,

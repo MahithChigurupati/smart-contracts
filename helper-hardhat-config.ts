@@ -21,7 +21,7 @@ export const networkConfig: networkConfigInfo = {
 export const developmentChains = ["hardhat"]
 export const testnetChains = ["sepolia"]
 
-export const DECIMALS = "18"
+export const frontEndContractsFile =
+    "./constants/contractAddresses.json"
+export const frontEndAbiFile = "./constants/abi.json"
 
-// export const MINT_FEE = ethers.parseEther("0.1")
-// export const ONE = ethers.parseUnits("1", 0)

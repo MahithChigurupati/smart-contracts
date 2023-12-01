@@ -1,9 +1,7 @@
 import { ethers, getNamedAccounts, deployments, network } from "hardhat"
 import { UNIVERSAL_ID } from "../typechain-types"
 import { developmentChains } from "../helper-hardhat-config"
-
 import * as circomlibjs from "circomlibjs"
-
 import { Address } from "hardhat-deploy/types"
 
 async function poseidonHash(inputs: any) {
@@ -68,6 +66,7 @@ async function main() {
         phone,
         universal_id
     )
+
     const identity = await universal_id.getID(user)
     console.log("identity ->", identity)
 }
