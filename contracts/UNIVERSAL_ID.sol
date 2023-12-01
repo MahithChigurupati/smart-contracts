@@ -6,8 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract UNIVERSAL_ID is Ownable(msg.sender) {
     struct Identity {
         bytes32 UID;
-        bytes32 firstNameHash; // keccak256 hash of name
-        bytes32 lastNameHash; // keccak256 hash of name
+        bytes32 nameHash; // keccak256 hash of name
         uint256 dobHash; // Poseidon hash of date of birth
         bytes32 phone;
     }

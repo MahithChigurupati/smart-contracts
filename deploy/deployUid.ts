@@ -16,7 +16,7 @@ const deployUniversalId: DeployFunction = async function (
     log("----------------------------------------------------")
     log("Deploying UNIVERSAL_ID and waiting for confirmations...")
 
-    const args = [""]
+    const args: any = []
     const universal_id = await deploy("UNIVERSAL_ID", {
         from: deployer,
         args: args,

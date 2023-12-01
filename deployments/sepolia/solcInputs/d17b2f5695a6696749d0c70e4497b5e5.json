@@ -1,0 +1,42 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "@openzeppelin/contracts/access/Ownable.sol": {
+      "content": "// SPDX-License-Identifier: MIT\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\n\npragma solidity ^0.8.20;\n\nimport {Context} from \"../utils/Context.sol\";\n\n/**\n * @dev Contract module which provides a basic access control mechanism, where\n * there is an account (an owner) that can be granted exclusive access to\n * specific functions.\n *\n * The initial owner is set to the address provided by the deployer. This can\n * later be changed with {transferOwnership}.\n *\n * This module is used through inheritance. It will make available the modifier\n * `onlyOwner`, which can be applied to your functions to restrict their use to\n * the owner.\n */\nabstract contract Ownable is Context {\n    address private _owner;\n\n    /**\n     * @dev The caller account is not authorized to perform an operation.\n     */\n    error OwnableUnauthorizedAccount(address account);\n\n    /**\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\n     */\n    error OwnableInvalidOwner(address owner);\n\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\n\n    /**\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\n     */\n    constructor(address initialOwner) {\n        if (initialOwner == address(0)) {\n            revert OwnableInvalidOwner(address(0));\n        }\n        _transferOwnership(initialOwner);\n    }\n\n    /**\n     * @dev Throws if called by any account other than the owner.\n     */\n    modifier onlyOwner() {\n        _checkOwner();\n        _;\n    }\n\n    /**\n     * @dev Returns the address of the current owner.\n     */\n    function owner() public view virtual returns (address) {\n        return _owner;\n    }\n\n    /**\n     * @dev Throws if the sender is not the owner.\n     */\n    function _checkOwner() internal view virtual {\n        if (owner() != _msgSender()) {\n            revert OwnableUnauthorizedAccount(_msgSender());\n        }\n    }\n\n    /**\n     * @dev Leaves the contract without owner. It will not be possible to call\n     * `onlyOwner` functions. Can only be called by the current owner.\n     *\n     * NOTE: Renouncing ownership will leave the contract without an owner,\n     * thereby disabling any functionality that is only available to the owner.\n     */\n    function renounceOwnership() public virtual onlyOwner {\n        _transferOwnership(address(0));\n    }\n\n    /**\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\n     * Can only be called by the current owner.\n     */\n    function transferOwnership(address newOwner) public virtual onlyOwner {\n        if (newOwner == address(0)) {\n            revert OwnableInvalidOwner(address(0));\n        }\n        _transferOwnership(newOwner);\n    }\n\n    /**\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\n     * Internal function without access restriction.\n     */\n    function _transferOwnership(address newOwner) internal virtual {\n        address oldOwner = _owner;\n        _owner = newOwner;\n        emit OwnershipTransferred(oldOwner, newOwner);\n    }\n}\n"
+    },
+    "@openzeppelin/contracts/utils/Context.sol": {
+      "content": "// SPDX-License-Identifier: MIT\n// OpenZeppelin Contracts (last updated v5.0.0) (utils/Context.sol)\n\npragma solidity ^0.8.20;\n\n/**\n * @dev Provides information about the current execution context, including the\n * sender of the transaction and its data. While these are generally available\n * via msg.sender and msg.data, they should not be accessed in such a direct\n * manner, since when dealing with meta-transactions the account sending and\n * paying for execution may not be the actual sender (as far as an application\n * is concerned).\n *\n * This contract is only required for intermediate, library-like contracts.\n */\nabstract contract Context {\n    function _msgSender() internal view virtual returns (address) {\n        return msg.sender;\n    }\n\n    function _msgData() internal view virtual returns (bytes calldata) {\n        return msg.data;\n    }\n}\n"
+    },
+    "contracts/UNIVERSAL_ID.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\nimport \"@openzeppelin/contracts/access/Ownable.sol\";\n\ncontract UNIVERSAL_ID is Ownable(msg.sender) {\n    struct Identity {\n        bytes32 UID;\n        bytes32 firstNameHash; // keccak256 hash of name\n        bytes32 lastNameHash; // keccak256 hash of name\n        uint256 dobHash; // Poseidon hash of date of birth\n        bytes32 phone;\n    }\n\n    struct Profile {\n        string entity;\n        uint256 dataHash;\n        uint256 timestamp;\n    }\n\n    mapping(address => Identity) private identities;\n    mapping(address => mapping(address => Profile)) identityProfiles;\n    mapping(address => address[]) private profiles;\n\n    string public name;\n    bytes32 private zeroHash = bytes32(0);\n\n    event Mint(address _user);\n    event Burn(address _user);\n    event Update(address _user);\n    event SetProfile(address _profiler, address _user);\n    event RemoveProfile(address _profiler, address _user);\n\n    function mint(address _user, Identity memory _identityData) external onlyOwner {\n        require(identities[_user].UID == zeroHash, \"Soul already exists\");\n        identities[_user] = _identityData;\n        emit Mint(_user);\n    }\n\n    function burn(address _user) external onlyOwner {\n        delete identities[_user];\n        for (uint256 i = 0; i < profiles[_user].length; i++) {\n            address profiler = profiles[_user][i];\n            delete identityProfiles[profiler][_user];\n        }\n        emit Burn(_user);\n    }\n\n    function update(address _user, Identity memory _identityData) external {\n        require(identities[_user].UID != zeroHash, \"Soul does not exist\");\n        identities[_user] = _identityData;\n        emit Update(_user);\n    }\n\n    function hasSoul(address _user) external view returns (bool) {\n        if (identities[_user].UID == zeroHash) {\n            return false;\n        } else {\n            return true;\n        }\n    }\n\n    function getSoul(address _user) external view returns (Identity memory) {\n        return identities[_user];\n    }\n\n    // Profile functions\n    function setProfile(address _user, Profile memory _profileData) external {\n        require(identities[_user].UID != zeroHash, \"Cannot create a profile for a soul that has not been minted\");\n        identityProfiles[msg.sender][_user] = _profileData;\n        profiles[_user].push(msg.sender);\n        emit SetProfile(msg.sender, _user);\n    }\n\n    function getProfile(address _profiler, address _user) external view returns (Profile memory) {\n        return identityProfiles[_profiler][_user];\n    }\n\n    function listProfiles(address _user) external view returns (address[] memory) {\n        return profiles[_user];\n    }\n\n    function hasProfile(address _profiler, address _user) public view returns (bool) {\n        if (keccak256(bytes(identityProfiles[_profiler][_user].entity)) == zeroHash) {\n            return false;\n        } else {\n            return true;\n        }\n    }\n\n    function removeProfile(address _profiler, address _user) external {\n        require(msg.sender == _user || msg.sender == _profiler, \"Only users have rights to delete their profile data\");\n        require(hasProfile(_profiler, _user), \"Profile does not exist\");\n        delete identityProfiles[_profiler][msg.sender];\n        emit RemoveProfile(_profiler, _user);\n    }\n\n    // Getters\n    function getID(address _user) external view returns (Identity memory) {\n        return identities[_user];\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "evmVersion": "paris",
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
