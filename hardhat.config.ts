@@ -1,4 +1,5 @@
 import { HardhatUserConfig } from "hardhat/config"
+import hre from "hardhat"
 import "@nomicfoundation/hardhat-toolbox"
 import "@nomicfoundation/hardhat-ethers"
 import "hardhat-deploy"
@@ -6,6 +7,7 @@ import "hardhat-deploy-ethers"
 import "@nomiclabs/hardhat-solhint"
 import "hardhat-gas-reporter"
 import "hardhat-contract-sizer"
+import "./tasks/custom-mint"
 
 import dotenv from "dotenv"
 

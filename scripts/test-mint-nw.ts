@@ -1,17 +1,9 @@
-// import { ethers, getNamedAccounts, network } from "hardhat"
+import { ethers, getNamedAccounts, deployments, network } from "hardhat"
 import { UNIVERSAL_ID } from "../typechain-types"
 import { developmentChains } from "../helper-hardhat-config"
 import * as circomlibjs from "circomlibjs"
 import { Address } from "hardhat-deploy/types"
 import addresses from "../constants/contractAddresses.json"
-
-interface MainFunctionArgs {
-    signer: string
-    firstName: string
-    lastName: string
-    dob: number // Assuming dob is a string that will be converted to a timestamp
-    phone: string
-}
 
 async function poseidonHash(inputs: any) {
     const poseidon = await circomlibjs.buildPoseidon()
@@ -20,7 +12,6 @@ async function poseidonHash(inputs: any) {
 }
 
 async function mintIdentity(
-    hre: any,
     signer: Address,
     fname: string,
     lname: string,
@@ -28,17 +19,12 @@ async function mintIdentity(
     phone: string,
     universal_id: UNIVERSAL_ID,
 ) {
-    const UID = hre.ethers.sha256(
-        hre.ethers.toUtf8Bytes(signer + fname + lname + dob + phone),
+    const UID = ethers.sha256(
+        ethers.toUtf8Bytes(signer + fname + lname + dob + phone),
     )
-    const nameHash = hre.ethers.sha256(
-        hre.ethers.toUtf8Bytes(signer + fname + lname),
-    )
-
+    const nameHash = ethers.sha256(ethers.toUtf8Bytes(signer + fname + lname))
     const DoBHash = await poseidonHash([signer, dob])
-    const phoneNumHash = hre.ethers.sha256(
-        hre.ethers.toUtf8Bytes(signer + phone),
-    )
+    const phoneNumHash = ethers.sha256(ethers.toUtf8Bytes(signer + phone))
 
     const identity = {
         UID: UID,
@@ -53,16 +39,20 @@ async function mintIdentity(
     await tx.wait()
 }
 
-async function main(
-    hre: any,
-    { signer, firstName, lastName, dob, phone }: MainFunctionArgs,
-) {
-    const { ethers, getNamedAccounts, network } = hre
+async function main() {
     const { deployer, user } = await getNamedAccounts()
-    console.log(deployer)
-    const chainId = network.config.chainId!.toString()
+    console.log(user)
+    const chainId: number = network.config.chainId!
 
-    // Fetch the deployed contract address
+    // let universal_id: UNIVERSAL_ID
+    // if (developmentChains.includes(network.name)) {
+    //     console.log("Deploying UNIVERSAL_ID contract to local network")
+    //     await deployments.fixture(["all"])
+    // }
+
+    // universal_id = await ethers.getContract("UNIVERSAL_ID", deployer)
+    // console.log(`Got contract UNIVERSAL_ID at ${universal_id.target}`)
+
     //@ts-ignore
     const universalIdAddress = addresses[chainId][0]
     if (!universalIdAddress) {
@@ -74,21 +64,29 @@ async function main(
         universalIdAddress,
     )
 
+    console.log(universal_id.target)
+
+    const firstName = "John"
+    const lastName = "Doe"
+    const DoB = "01/01/2000"
+    const DoBTimestamp = Date.parse(DoB)
+    const phone = "+18578578587"
     await mintIdentity(
-        hre,
-        signer,
+        deployer,
         firstName,
         lastName,
-        dob,
+        DoBTimestamp,
         phone,
         universal_id,
     )
 
-    // Fetch the identity for confirmation (optional)
-    const identity = await universal_id.getID(signer)
+    const identity = await universal_id.getID(deployer)
     console.log("identity ->", identity)
 }
 
-export default main
-
-// npx hardhat custom-mint --signer 0x03fcDbb718cDDb25ab4c07D77e1511c5bbF5D126 --firstname John --lastname Doe --dob 01/01/2000 --phone +18576939706 --network sepolia
+main()
+    .then(() => process.exit(0))
+    .catch((error) => {
+        console.error(error)
+        process.exit(1)
+    })
