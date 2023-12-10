@@ -1,0 +1,49 @@
+{
+  "name": "smart-contracts",
+  "version": "1.0.0",
+  "description": "Smart Contracts for transaction handling and mocks",
+  "main": "index.js",
+  "scripts": {
+    "clean": "npx hardhat clean",
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "test:sepolia": "npx hardhat test --network sepolia",
+    "lint": "npx solhint contracts/**/*.sol",
+    "lint:fix": "npx solhint --fix contracts/**/*.sol",
+    "format": "npx prettier --write .",
+    "coverage": "npx hardhat coverage",
+    "deploy": "npx hardhat deploy",
+    "deploy:sepolia": "npx hardhat deploy --network sepolia",
+    "deploy:mainnet": "npx hardhat deploy --network mainnet",
+    "script:mint": "npx hardhat run scripts/02-mint.ts",
+    "script:mint-sepolia": "npx hardhat run scripts/02-mint.ts --network sepolia"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:MahithChigurupati/smart-contracts.git"
+  },
+  "author": "Mahith Chigurupati",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.4.1",
+    "@nomiclabs/hardhat-solhint": "^3.0.1",
+    "@types/circomlibjs": "^0.1.6",
+    "@types/minimist": "^1.2.5",
+    "hardhat": "^2.19.1",
+    "hardhat-contract-sizer": "^2.10.0",
+    "hardhat-deploy": "^0.11.34",
+    "hardhat-deploy-ethers": "^0.4.1",
+    "hardhat-gas-reporter": "^1.0.9",
+    "prettier": "^3.1.0",
+    "prettier-plugin-solidity": "^1.2.0",
+    "solidity-coverage": "^0.8.4"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "circomlibjs": "^0.1.2",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.9.0",
+    "minimist": "^1.2.8"
+  }
+}
