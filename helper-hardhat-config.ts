@@ -21,7 +21,8 @@ export const networkConfig: networkConfigInfo = {
 export const developmentChains = ["hardhat"]
 export const testnetChains = ["sepolia"]
 
-export const frontEndContractsFile =
-    "./constants/contractAddresses.json"
+export const frontEndContractsFile = "./constants/contractAddresses.json"
 export const frontEndAbiFile = "./constants/abi.json"
 
+export const ContractsFile = "../core-server/constants/contractAddresses.json"
+export const AbiFile = "../core-server/constants/abi.json"

@@ -1,6 +1,4 @@
-// import { ethers, getNamedAccounts, network } from "hardhat"
 import { UNIVERSAL_ID } from "../typechain-types"
-import { developmentChains } from "../helper-hardhat-config"
 import * as circomlibjs from "circomlibjs"
 import { Address } from "hardhat-deploy/types"
 import addresses from "../constants/contractAddresses.json"
@@ -59,7 +57,6 @@ async function main(
 ) {
     const { ethers, getNamedAccounts, network } = hre
     const { deployer, user } = await getNamedAccounts()
-    console.log(deployer)
     const chainId = network.config.chainId!.toString()
 
     // Fetch the deployed contract address
@@ -86,9 +83,28 @@ async function main(
 
     // Fetch the identity for confirmation (optional)
     const identity = await universal_id.getID(signer)
-    console.log("identity ->", identity)
 }
 
 export default main
 
 // npx hardhat custom-mint --signer 0x03fcDbb718cDDb25ab4c07D77e1511c5bbF5D126 --firstname John --lastname Doe --dob 01/01/2000 --phone +18576939706 --network sepolia
+
+// async function verifyAgeProof(
+//     address,
+//     proof,
+//     publicSignals,
+//     dIdentityContract,
+// ) {
+//     const id = await dIdentityContract.getID(address)
+//     const vKey = JSON.parse(fs.readFileSync("verification_key.json"))
+//     const res = await snarkjs.groth16.verify(vKey, publicSignals, proof)
+//     return res && id.dobHash == publicSignals[3]
+// }
+
+// const verification = await verifyAgeProof(
+//     addr1.address,
+//     proof,
+//     publicSignals,
+//     dIdentityContract,
+// )
+// console.log(verification)

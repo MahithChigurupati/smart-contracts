@@ -8,8 +8,6 @@ task("custom-mint", "mints an identity to user")
     .addParam("dob", "The date of birth")
     .addParam("phone", "The phone number")
     .setAction(async (taskArgs, hre) => {
-        console.log("Running custom mint function")
-
         // Convert DoB to timestamp
         const DoBTimestamp = Date.parse(taskArgs.dob)
 

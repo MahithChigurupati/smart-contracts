@@ -1,13 +1,15 @@
 import {
     frontEndContractsFile,
     frontEndAbiFile,
+    ContractsFile,
+    AbiFile,
 } from "../helper-hardhat-config"
 import fs from "fs"
 import { DeployFunction } from "hardhat-deploy/types"
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 
 const updateUI: DeployFunction = async function (
-    hre: HardhatRuntimeEnvironment
+    hre: HardhatRuntimeEnvironment,
 ) {
     const { network, ethers } = hre
     const chainId = "31337"
@@ -16,16 +18,16 @@ const updateUI: DeployFunction = async function (
         console.log("Writing to front end...")
         const universal_id = await ethers.getContract("UNIVERSAL_ID")
         const contractAddresses = JSON.parse(
-            fs.readFileSync(frontEndContractsFile, "utf8")
+            fs.readFileSync(frontEndContractsFile, "utf8"),
         )
         if (chainId in contractAddresses) {
             if (
                 !contractAddresses[network.config.chainId!].includes(
-                    universal_id.target
+                    universal_id.target,
                 )
             ) {
                 contractAddresses[network.config.chainId!].push(
-                    universal_id.target
+                    universal_id.target,
                 )
             }
         } else {
@@ -33,11 +35,16 @@ const updateUI: DeployFunction = async function (
         }
         fs.writeFileSync(
             frontEndContractsFile,
-            JSON.stringify(contractAddresses)
+            JSON.stringify(contractAddresses),
         )
         fs.writeFileSync(
             frontEndAbiFile,
-            JSON.stringify(universal_id.interface.fragments)
+            JSON.stringify(universal_id.interface.fragments),
+        )
+        fs.writeFileSync(ContractsFile, JSON.stringify(contractAddresses))
+        fs.writeFileSync(
+            AbiFile,
+            JSON.stringify(universal_id.interface.fragments),
         )
         console.log("Front end written!")
     }
