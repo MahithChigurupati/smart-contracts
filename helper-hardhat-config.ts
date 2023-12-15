@@ -26,3 +26,5 @@ export const frontEndAbiFile = "./constants/abi.json"
 
 export const ContractsFile = "../core-server/constants/contractAddresses.json"
 export const AbiFile = "../core-server/constants/abi.json"
+
+export const addressesFile = "./constants/addresses.json"
