@@ -1,7 +1,7 @@
-import { UNIVERSAL_ID } from "../typechain-types"
+import { SSA_ID } from "../typechain-types"
 import * as circomlibjs from "circomlibjs"
 import { Address } from "hardhat-deploy/types"
-import addresses from "../constants/contractAddresses.json"
+import addresses from "../constants/addresses.json"
 
 interface MainFunctionArgs {
     signer: string
@@ -24,11 +24,10 @@ async function mintIdentity(
     lname: string,
     dob: number,
     phone: string,
-    universal_id: UNIVERSAL_ID,
+    ssa_id: SSA_ID,
 ) {
     //@ts-ignore
     const universalIdAddress = addresses["11155111"][0]
-
     const UID = hre.ethers.sha256(
         hre.ethers.toUtf8Bytes(
             signer + fname + lname + dob + phone + universalIdAddress,
@@ -52,11 +51,11 @@ async function mintIdentity(
 
     console.log(identity)
 
-    const tx = await universal_id.mint(signer, identity)
+    const tx = await ssa_id.mint(signer, identity)
     await tx.wait()
 }
 
-async function mintScript02(
+async function mintScript03(
     hre: any,
     { signer, firstName, lastName, dob, phone }: MainFunctionArgs,
 ) {
@@ -70,22 +69,11 @@ async function mintScript02(
         console.error(`No address found for chain ID ${chainId}`)
         process.exit(1)
     }
-    const universal_id = await ethers.getContractAt(
-        "UNIVERSAL_ID",
-        universalIdAddress,
-    )
+    const ssa_id = await ethers.getContractAt("SSA_ID", universalIdAddress)
 
-    await mintIdentity(
-        hre,
-        signer,
-        firstName,
-        lastName,
-        dob,
-        phone,
-        universal_id,
-    )
+    await mintIdentity(hre, signer, firstName, lastName, dob, phone, ssa_id)
 
-    const identity = await universal_id.getID(signer)
+    const identity = await ssa_id.getID(signer)
 }
 
-export default mintScript02
+export default mintScript03
